@@ -94,29 +94,14 @@
 
 </style>
 <body>
-<div class="container">
-	<div class="row">
-		<div class="col-md-6 offset-md-3">
-			<div id="main_id" class="">
-				<canvas class="render position-absolute top-0 start-50 translate-middle-x" id='my-canvas' ></canvas>
-				<canvas class="render position-absolute top-0 start-50 translate-middle-x" id='heatmap' ></canvas>
-				<canvas class="render position-absolute top-0 start-50 translate-middle-x" id='goals' ></canvas>
-			</div>
-		</div>
-	</div>
-
-</div>
-
-<div class=" fixed-bottom container mb-2">
+<div class="container my-2">
 	<div class="stats-inline">
 		<div class="" style="width: 30%;">&nbsp</div>
-		<!--------------------------->
 		<div  class=" " style="width: 70%; height: auto; display: flex">
-				<button hasColor="danger" isActive="true" id="hosts" type="button" class="toggler btn btn-sm btn-danger" style="width: 50%; margin-left: auto" onclick="toggleTeams(this)"></button>
-				<button hasColor="primary" isActive="false" id="guests" type="button" class="toggler btn btn-sm btn-outline-primary" style="width: 50%; margin-right: auto" onclick="toggleTeams(this)"></button>
+			<button hasColor="danger" isActive="true" id="hosts" type="button" class="toggler btn btn-sm btn-danger" style="width: 50%; margin-left: auto" onclick="toggleTeams(this)"></button>
+			<button hasColor="primary" isActive="false" id="guests" type="button" class="toggler btn btn-sm btn-outline-primary" style="width: 50%; margin-right: auto" onclick="toggleTeams(this)"></button>
 		</div>
 	</div>
-	<!------------------------------------------>
 
 
 	<div class="stats-inline">
@@ -159,9 +144,23 @@
 		</div>
 	</div>
 	<hr>
-		<button type="button" class="btn btn-sm btn-outline-primary" onclick='window.history.go(-1); return false;'>Назад</button>
-		<button type="button" class="btn btn-sm btn-outline-primary" onclick='restore(this.innerHTML); return false;'>Обновить</button>
+	<button type="button" class="position-absolute top-10 start-50 translate-middle-x btn btn-sm btn-outline-primary" onclick='window.history.go(-1); return false;'>Назад</button>
+	<button type="button" class="btn btn-sm btn-outline-primary" onclick='restore(this.innerHTML); return false;'>Обновить</button>
 </div>
+<div class="container">
+	<div class="row">
+		<div class="col-md-6 offset-md-3">
+			<div id="main_id" class="">
+				<canvas class="mt-1 render position-absolute top-10 start-50 translate-middle-x" id='my-canvas' ></canvas>
+				<canvas class="mt-1 render position-absolute top-10 start-50 translate-middle-x" id='heatmap' ></canvas>
+				<canvas class="mt-1 render position-absolute top-10 start-50 translate-middle-x" id='goals' ></canvas>
+			</div>
+		</div>
+	</div>
+
+</div>
+
+
 
 
 <!-- Modal -->
@@ -281,22 +280,6 @@
 	async function genProg() {
 		const stats = await getShotsStats(getURLValues()['game_id'], getURLValues()['host_id'], getURLValues()['guest_id'])
 		console.log(stats)
-
-/*
-		g_goals: 2
-
-		g_shots: 14
-
-		g_target: 5
-
-		h_goals: 0
-
-		h_shots: 9
-
-		h_target: 4
-
-		*/
-
 		let h_s, h_sog, h_g, g_s, g_sog, g_g
 		let h_s_p, h_sog_p, h_g_p, g_s_p, g_sog_p, g_g_p
 		h_s = stats['h_shots']
@@ -346,9 +329,9 @@
 	const canvas = document.querySelector('#my-canvas');
 	const context = canvas.getContext('2d');
 	const image = new Image();
-	const ih = 1200
+	const ih = 1300
 	const iw = 1700
-	image.src = 'https://www.tagban.ru/plus/stats/img/full_rink.svg';
+	image.src = 'https://www.tagban.ru/plus/stats/img/rink_halved.svg';
 	image.onload = function() {
 		let cvs = document.getElementById("my-canvas")
 		cvs.width = iw
