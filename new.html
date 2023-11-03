@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en" data-bs-theme="light">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>New Game</title>
+</head>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+<style>
+	body {
+		background-color: #ffffff;
+	}
+	button {
+		touch-action: manipulation;
+	}
+
+</style>
+<body>
+<div class="container  mt-3">
+	<div class="row">
+		<div class="col-md-6 offset-md-3 align-middle align-items-center">
+			<div id = "form">
+				<div class="mb-3">
+					<select id="select_year" class="form-select" aria-label="Default select example" onchange="getTeams(this)">
+
+					</select>
+				</div>
+				<div class="mb-3">
+					<select id="host_team" class="form-select" aria-label="Default select example" onchange="readValue(this)"></select>
+				</div>
+				<div class="mb-3">
+					<select id="guest_team" class="form-select" aria-label="Default select example"></select>
+				</div>
+				<div class="mb-3">
+					<input class="form-control" type="date" id="dateSelector" value="">
+				</div>
+				<div class="mb-3">
+					<input class="form-control" type="text" id="game_url" value="" placeholder="Ссылка на игру">
+				</div>
+				<div class="mb-3">
+					<button type="button" class="btn btn-primary" onclick="newGame()">Создать игру</button>
+					<p id="newGame"></p>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</div>
+<script id="getteams">
+	function getTeams() {
+		document.getElementById("guest_team").options.length = 0;
+		document.getElementById("host_team").options.length = 0;
+		let el = document.getElementById("select_year")
+		let year = el.options[el.selectedIndex].text
+		const options = {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: 'Token 11609376-ff57-401e-88a4-53f4c0904fdb'
+			},
+			body: '{"year": "'+year + '"}'
+		};
+
+		fetch('https://x125.ru/api/stats/getteams', options)
+				.then(response => response.json())
+				.then(response => {
+					console.log(response)
+					for (let i = 0; i < response.length; i++) {
+						const opt = document.createElement("option");
+						opt.innerHTML = response[i]['team_text']
+						opt.setAttribute("title", response[i]['team_id'])
+						opt.setAttribute("onselect", "readValue()")
+						document.getElementById("host_team").append(opt)
+					}
+					teamsarr = response
+					let disabled_option = document.createElement("option")
+					disabled_option.innerHTML = "Выберите команду хозяев"
+					disabled_option.setAttribute("disabled", "");
+					document.getElementById("host_team").prepend(disabled_option)
+					document.getElementById("host_team").selectedIndex = 0
+				})
+				.catch(err => console.error(err));
+
+
+	}
+
+</script>
+<script id="newGameArray">
+
+	const host_team = document.getElementById("host_team")
+	const guest_team = document.getElementById("guest_team")
+	//////////
+	function getTeamId(team_text) {
+		const team = teamsarr.find(t => t.team_text === team_text);
+		return team ? team.team_id : null;
+	}
+///////////////
+	function newGame() {
+		const newGameObject = {}
+		const preparedNewGame = {}
+		const host = getTeamId(host_team.options[host_team.selectedIndex].text)
+		const guest = getTeamId(guest_team.options[guest_team.selectedIndex].text)
+		const gameDate = document.getElementById("dateSelector").value
+		const gameUrl = document.getElementById("game_url").value
+
+		newGameObject["host"] = host
+		newGameObject["guest"] = guest
+		newGameObject["game_date"] = gameDate
+		newGameObject["game_url"] = gameUrl
+
+		preparedNewGame["items"] = [newGameObject]
+		console.log(JSON.stringify(preparedNewGame))
+		APISendRequest('newgame', JSON.stringify(preparedNewGame))
+	}
+</script>
+<script id="selectManipulations">
+	const years_array = [2011,2012,2013,2014,2015]
+	function yearsPopulate() {
+		for (let i = 0; i < years_array.length; i++) {
+			const opt = document.createElement("option");
+			opt.innerHTML = years_array[i]
+			opt.setAttribute("title", years_array[i])
+			opt.setAttribute("onselect", "readValue()")
+			document.getElementById("select_year").append(opt)
+		}
+		let disabled_option = document.createElement("option")
+		disabled_option.innerHTML = "Выберите год"
+		disabled_option.setAttribute("disabled", "");
+		document.getElementById("select_year").prepend(disabled_option)
+		document.getElementById("select_year").selectedIndex = 0
+	}
+	function readValue(el) {
+		let guest_array = []
+		guest_array = removeTeamByText(teamsarr, el.options[el.selectedIndex].text)
+
+		document.getElementById("guest_team").options.length = 0;
+		for (let i = 0; i < guest_array.length; i++) {
+			const opt = document.createElement("option");
+			opt.innerHTML = guest_array[i]['team_text']
+			opt.setAttribute("title", guest_array[i]['team_id'])
+			opt.setAttribute("onselect", "readValue()")
+			document.getElementById("guest_team").append(opt)
+		}
+		let disabled_option = document.createElement("option")
+		disabled_option.innerHTML = "Выберите команду гостей"
+		disabled_option.setAttribute("disabled", "");
+		document.getElementById("guest_team").prepend(disabled_option)
+		document.getElementById("guest_team").selectedIndex = 0
+	}
+	var teamsarr = []
+
+	function removeTeamByText(arr, textToRemove) {
+		// Use filter method to create a new array without the object with the specified teamtext value
+		const editedArray = arr.filter(obj => obj.team_text !== textToRemove);
+		// Return the newly edited array
+		console.log(editedArray)
+		return editedArray;
+	}
+</script>
+
+<script id="newRequest">
+	function APISendRequest(funcName, body) {
+		const options = {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: 'Token 11609376-ff57-401e-88a4-53f4c0904fd8'
+			},
+			body: body
+		};
+
+		fetch('https://x125.ru/api/stats/'+funcName, options)
+				.then(response => response.json())
+				.then(response => console.log(response))
+				.catch(err => console.error(err));
+	}
+</script>
+<script>
+	const script = document.createElement('script');
+	script.src='js/json.js'+ '?t=' + Date.now();
+	document.body.appendChild(script);
+	script.addEventListener('load', function() {
+		yearsPopulate()
+		document.getElementById("dateSelector").value = new Date().toISOString().split('T')[0]
+
+	});
+</script>
+</body>
+
+</html>

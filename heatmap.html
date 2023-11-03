@@ -1,0 +1,580 @@
+<!doctype html>
+<html lang="en" data-bs-theme="light">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Game stats</title>
+</head>
+<script src="js/urgent.js"></script>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+<style>
+	body {
+		background-color: #f3f3f3;
+	}
+	button {
+		touch-action: manipulation;
+	}
+	#heatmap {
+		position: relative;
+		/*top: 0;
+		left: 0;
+		/*width: 100%;*/
+		/*height: 100%;*/
+		/*background: #a9a9a9*/
+	}
+
+	.render {
+		/*position: absolute;
+		/*top:0;*/
+		width:98%;
+		/*height:90%;*/
+		margin-left: auto; !important;
+		margin-right: auto; !important;
+	}
+
+	.table-sm>:not(caption)>*>* {
+		padding: .0rem 0.3rem;
+	}
+	button {
+		margin-bottom: 0.2em;
+		margin-right: 0.2em;
+	}
+	.progbar{
+		margin-bottom: 0.2em;
+		margin-inline: 1px;
+	}
+
+	.stats-inline {
+		display: inline-flex;
+		width: 100%;
+	}
+
+	#host_shots_prog {
+		background-color: #ff7c7c; !important;
+	}
+
+	#host_shots_on_goal_prog {
+		background-color: #ff4040; !important;
+	}
+	#host_goals_prog {
+		background-color: #b02424; !important;
+	}
+
+	#guest_shots_prog {
+		background-color: #759aff; !important;
+	}
+
+	#guest_shots_on_goal_prog {
+		background-color: #2964ee; !important;
+	}
+	#guest_goals_prog {
+		background-color: #0d3db7; !important;
+	}
+	/*#hosts {
+		background-color: #ffafaf;
+		color: #2f2f2f;
+	}
+	#guests {
+		background-color: #7c8dff;
+	}*/
+	.types {
+		width: 30%;
+		background-color: #f3f3f3;
+		color: black;
+		text-align: left;
+	}
+	.team{
+		height: 1em; !important;
+	}
+
+
+
+</style>
+<body>
+<div class="container">
+	<div class="row">
+		<div class="col-md-6 offset-md-3">
+			<div id="main_id" class="">
+				<canvas class="render position-absolute top-0 start-50 translate-middle-x" id='my-canvas' ></canvas>
+				<canvas class="render position-absolute top-0 start-50 translate-middle-x" id='heatmap' ></canvas>
+				<canvas class="render position-absolute top-0 start-50 translate-middle-x" id='goals' ></canvas>
+			</div>
+		</div>
+	</div>
+
+</div>
+
+<div class=" fixed-bottom container mb-2">
+	<div class="stats-inline">
+		<div class="" style="width: 30%;">&nbsp</div>
+		<!--------------------------->
+		<div  class=" " style="width: 70%; height: auto; display: flex">
+				<button hasColor="danger" isActive="true" id="hosts" type="button" class="toggler btn btn-sm btn-danger" style="width: 50%; margin-left: auto" onclick="toggleTeams(this)"></button>
+				<button hasColor="primary" isActive="false" id="guests" type="button" class="toggler btn btn-sm btn-outline-primary" style="width: 50%; margin-right: auto" onclick="toggleTeams(this)"></button>
+		</div>
+	</div>
+	<!------------------------------------------>
+
+
+	<div class="stats-inline">
+		<div class="progbar types progress progress-bar">
+			БРОСКИ
+		</div>
+		<div  class="progbar progress-stacked" style="width: 70%">
+			<div id="host_shots" class="progress" role="progressbar">
+				<div id="host_shots_prog" class="progress-bar "></div>
+			</div>
+			<div id="guest_shots" class="progress" role="progressbar">
+				<div id="guest_shots_prog" class="progress-bar "></div>
+			</div>
+		</div>
+	</div>
+	<div class="stats-inline">
+		<div class="progbar types progress progress-bar">
+			В СТВОР
+		</div>
+		<div  class="progbar progress-stacked" style="width: 70%">
+			<div id="host_shots_on_goal" class="progress" role="progressbar">
+				<div id="host_shots_on_goal_prog" class="progress-bar bs-primary-emphasis"></div>
+			</div>
+			<div id="guest_shots_on_goal" class="progress" role="progressbar">
+				<div id="guest_shots_on_goal_prog" class="progress-bar bs-primary-emphasis"></div>
+			</div>
+		</div>
+	</div>
+	<div class="stats-inline">
+		<div class="progbar types progress progress-bar">
+			ГОЛЫ
+		</div>
+		<div  class="progbar progress-stacked" style="width: 70%">
+			<div id="host_goals" class="progress" role="progressbar">
+				<div id="host_goals_prog" class="progress-bar bs-primary-emphasis"></div>
+			</div>
+			<div id="guest_goals" class="progress" role="progressbar">
+				<div id="guest_goals_prog" class="progress-bar bs-primary-emphasis"></div>
+			</div>
+		</div>
+	</div>
+	<hr>
+		<button type="button" class="btn btn-sm btn-outline-primary" onclick='window.history.go(-1); return false;'>Назад</button>
+		<button type="button" class="btn btn-sm btn-outline-primary" onclick='restore(this.innerHTML); return false;'>Обновить</button>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-sm modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h1 class="modal-title fs-5" id="exampleModalLabel">Бросок</h1><br><small><span id="coordinate_x"></span><br><span id="coordinate_y"></span></small>
+			</div>
+			<div class="modal-body">
+				<!-- FORM CONTROL -->
+				<form>
+					<div>
+						<div class="btn-group btn-group-sm"  style="width: 100%" role="group" aria-label="Basic example">
+							<input type="radio" class="btn-check" name="shots" id="isShot" autocomplete="off" onchange="checkType()">
+							<label class="btn btn-outline-primary" for="isShot">Бросок</label>
+
+							<input type="radio" class="btn-check" name="shots" id="isTarget" autocomplete="off" onchange="checkType()">
+							<label class="btn btn-outline-warning" for="isTarget">Створ</label>
+
+							<input type="radio" class="btn-check btn-sm" name="shots" id="isGoal" autocomplete="off" onchange="checkType()">
+							<label class="btn btn-outline-danger" for="isGoal">Гол</label>
+
+
+						</div>
+					</div>
+					<hr>
+					<div>
+						<div class="btn-group btn-group-sm"  style="width: 100%" role="group" aria-label="Basic example">
+							<input type="radio" class="btn-check btn-sm" name="teams" id="team1" autocomplete="off" onchange="checkType();transfer_team_data('team_id', this.getAttribute('team_id'))">
+							<label id="team1_label"  class="btn btn-outline-danger" for="team1"></label>
+
+							<input type="radio" class="btn-check" name="teams" id="team2" autocomplete="off" onchange="checkType();transfer_team_data('team_id', this.getAttribute('team_id'))">
+							<label id="team2_label" class="btn btn-outline-primary" for="team2"></label>
+						</div>
+						<hr>
+						<div id="players">
+
+						</div>
+					</div>
+					<!--
+					<hr>
+					<div>
+						<select id="player" class="form-select" aria-label="Default select example">
+							<option selected disabled>Выберите игрока</option>
+							<option value="1">#47 Бояркин</option>
+							<option value="2">#13 Гизи</option>
+							<option value="3">#28 Гридин</option>
+						</select>
+					</div>-->
+				</form>
+				<!-- FORM CONTROL -->
+
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="resetModal()">Отмена</button>
+				<button id="sendData" type="button" class="btn btn-primary" onclick="closeModal()">Сохранить</button>
+			</div>
+			<span id="team_id_data"></span>
+		</div>
+	</div>
+</div>
+<div class="modal-backdrop fade show" id="backdrop" style="display: none;"></div>
+
+
+<!------------------------------------------------>
+<script id="getUrlParameters">
+	function getURLValues() {
+		const search = window.location.search.replace(/^\?/, '').replace(/\+/g, ' ');
+		const values = {};
+		if (search.length) {
+			let part, parts = search.split('&');
+
+			let i = 0, iLen = parts.length;
+			for (; i<iLen; i++ ) {
+				part = parts[i].split('=');
+				values[part[0]] = window.decodeURIComponent(part[1]);
+			}
+		}
+		return values
+	}
+</script>
+<script id="toggling">
+	function toggleTeams(element) {
+		const togglers = document.getElementsByClassName("toggler")
+		if (element.getAttribute("isActive") === "false"){
+			for (const button of togglers) {
+				if (button.getAttribute("isActive") === "true"){
+					button.setAttribute("isActive", "false")
+					button.classList.remove("btn-" + button.getAttribute("hasColor"))
+					button.classList.add("btn-outline-" + button.getAttribute("hasColor"))
+					redraw(element.getAttribute("team_id"))
+				} else {
+					button.setAttribute("isActive", "true")
+					button.classList.remove("btn-outline-" + button.getAttribute("hasColor"))
+					button.classList.add("btn-" + button.getAttribute("hasColor"))
+				}
+			}
+		}
+	}
+</script>
+<script id = "genProg">
+	function randomIntFromInterval(min, max) { // min and max included
+		return Math.floor(Math.random() * (max - min + 1) + min)
+	}
+
+	function getShotsStats(game, host, guest) {
+		let opts = {
+			"game_id": game,
+			"host_id": host,
+			"guest_id": guest
+		}
+		const stats = APISendRequest("getcurrentgamestats", JSON.stringify(opts))
+		return stats
+	}
+
+	async function genProg() {
+		const stats = await getShotsStats(getURLValues()['game_id'], getURLValues()['host_id'], getURLValues()['guest_id'])
+		console.log(stats)
+
+/*
+		g_goals: 2
+
+		g_shots: 14
+
+		g_target: 5
+
+		h_goals: 0
+
+		h_shots: 9
+
+		h_target: 4
+
+		*/
+
+		let h_s, h_sog, h_g, g_s, g_sog, g_g
+		let h_s_p, h_sog_p, h_g_p, g_s_p, g_sog_p, g_g_p
+		h_s = stats['h_shots']
+		h_sog = stats['h_target']
+		h_g = stats['h_goals']
+
+		g_s = stats['g_shots']
+		g_sog = stats['g_target']
+		g_g = stats['g_goals']
+
+		let all_hosts_shots = h_s + h_sog + h_g
+		let all_guests_shots = g_s + g_sog + g_g
+
+		h_s_p = h_s / (h_s+g_s)  * 100
+		h_sog_p = h_sog / (h_sog + g_sog) *100
+		h_g_p = h_g / (h_g + g_g)  *100
+
+
+		g_s_p = g_s / (h_s+g_s) * 100
+		g_sog_p = g_sog / (h_sog + g_sog) *100
+		g_g_p = g_g / (h_g + g_g)  *100
+
+		if (h_g + g_g == 0){
+			h_g_p = 50
+			g_g_p = 50
+		}
+
+
+
+		document.getElementById("host_shots").setAttribute("style", "width: " + h_s_p + "%")
+		document.getElementById("host_shots_prog").innerHTML = h_s
+		document.getElementById("host_shots_on_goal").setAttribute("style", "width: " + h_sog_p + "%")
+		document.getElementById("host_shots_on_goal_prog").innerHTML = h_sog
+		document.getElementById("host_goals").setAttribute("style", "width: " + h_g_p + "%")
+		document.getElementById("host_goals_prog").innerHTML = h_g
+
+		document.getElementById("guest_shots").setAttribute("style", "width: " + g_s_p + "%")
+		document.getElementById("guest_shots_prog").innerHTML = g_s
+		document.getElementById("guest_shots_on_goal").setAttribute("style", "width: " + g_sog_p + "%")
+		document.getElementById("guest_shots_on_goal_prog").innerHTML = g_sog
+		document.getElementById("guest_goals").setAttribute("style", "width: " + g_g_p + "%")
+		document.getElementById("guest_goals_prog").innerHTML = g_g
+
+	}
+</script>
+<script id="svg_rendering">
+	const canvas = document.querySelector('#my-canvas');
+	const context = canvas.getContext('2d');
+	const image = new Image();
+	const ih = 1200
+	const iw = 1700
+	image.src = 'https://www.tagban.ru/plus/stats/img/half_rink.svg';
+	image.onload = function() {
+		let cvs = document.getElementById("my-canvas")
+		cvs.width = iw
+		cvs.height = ih
+
+		//context.width = image.width*3
+		//context.height = image.height*3
+		context.drawImage(image, 0, 0); // drawImage(image, x-start, y-start, width, height)
+		const heatmap = document.querySelector('#heatmap');
+		const hmp = heatmap.getContext('2d')
+		hmp.width = iw
+		hmp.height = ih
+		const gls = heatmap.getContext('2d')
+		gls.width = iw
+		gls.height = ih
+		document.getElementById("heatmap").width = iw
+		document.getElementById("heatmap").height = ih
+		document.getElementById("goals").width = iw
+		document.getElementById("goals").height = ih
+	};
+	image.onerror = function() {
+		context.fillStyle = 'red';
+		context.font = '16px Arial';
+		context.fillText('ERROR!', 1, 3);
+	};
+
+	////////////////////////////////////////
+
+</script>
+<script>
+	goals_array = []
+	function reddish(element) {
+		//element.classList.replace('btn-outline-secondary', 'btn-danger')
+		if (element.classList.contains('btn-outline-secondary')){
+			element.classList.replace('btn-outline-secondary', 'btn-danger')
+		} else {
+			element.classList.replace('btn-danger', 'btn-outline-secondary')
+		}
+	}
+	function populatePlayers() {
+		document.getElementById("players").replaceChildren()
+		const playersArray = [17,47,34,65,12,31]
+		for (const number of playersArray) {
+			let player = document.createElement("button")
+			player.setAttribute("class", "btn btn-sm btn-outline-secondary")
+			player.setAttribute("onclick", "transfer_team_data('player_id', this.getAttribute('player_id')); reddish(this)")
+			player.setAttribute("player_id", number)
+			player. setAttribute("type", "button")
+			player.innerHTML = number
+			document.getElementById("players").append(player)
+
+		}
+
+			//<button player_id="47" type="button" class="btn btn-sm btn-warning" onclick="transfer_team_data('player_id', this.getAttribute('player_id')); reddish(this)">47</button>
+
+	}
+	function checkType() {
+		if ((document.getElementById('isGoal').checked === false  && document.getElementById('isShot').checked === false && document.getElementById('isTarget').checked === false) ||
+				(document.getElementById('team1').checked === false && document.getElementById('team2').checked === false)){
+			document.getElementById("sendData").disabled = true
+		} else {
+			document.getElementById("sendData").disabled = false
+		}
+	}
+	function openModal(x,y) {
+		checkType()
+		populatePlayers()
+		document.getElementById("backdrop").style.display = "block"
+		document.getElementById("exampleModal").style.display = "block"
+		document.getElementById("exampleModal").classList.add("show")
+		document.getElementById("coordinate_x").innerHTML = x
+		document.getElementById("coordinate_y").innerHTML = y
+	}
+	const shots = []
+	function getCoordinates(log) {
+		let outputCoordinates = []
+		for (let i = 0; i < log.length; i++) {
+			outputCoordinates.push([log[i][0], log[i][1]])
+		}
+		return outputCoordinates
+	}
+	function closeModal() {
+		let point_x = document.getElementById("coordinate_x").innerHTML
+		let point_y = document.getElementById("coordinate_y").innerHTML
+		drawPoint(point_x, point_y)
+		if (document.getElementById('isGoal').checked === true){
+			draw_text(point_x, point_y, "G")
+		}
+		document.getElementById("backdrop").style.display = "none"
+		document.getElementById("exampleModal").style.display = "none"
+		document.getElementById("exampleModal").classList.remove("show")
+		document.getElementById('team1').checked = false
+		document.getElementById('team2').checked = false
+
+		//document.getElementById("player").selectedIndex = 0;
+		shots.push([parseInt(point_x),parseInt(point_y),document.getElementById('isGoal').checked])
+		console.log(shots)
+		console.log(getCoordinates(shots))
+		sendShot("4", "1", point_x, point_y, document.getElementById('isGoal').checked, document.getElementById('isTarget').checked)
+		redraw(12)
+		document.getElementById('isGoal').checked = false
+		document.getElementById('isShot').checked = false
+		document.getElementById('isTarget').checked = false
+	}
+	function resetModal() {
+		document.getElementById("backdrop").style.display = "none"
+		document.getElementById("exampleModal").style.display = "none"
+		document.getElementById("exampleModal").classList.remove("show")
+		document.getElementById('team1').checked = false
+		document.getElementById('team2').checked = false
+		document.getElementById('isGoal').checked = false
+		document.getElementById('isShot').checked = false
+		document.getElementById('isTarget').checked = false
+		//document.getElementById("player").selectedIndex = 0;
+	}
+
+
+	//const modal_toggle = document.getElementById('heatmap')
+	//modal_toggle.addEventListener('mouseup', function(e) {
+		//openModal()
+	//})
+
+
+</script>
+<script id="sendCoordinates">
+
+	function transfer_team_data(attribute, data) {
+		document.getElementById("team_id_data").setAttribute(attribute, data)
+	}
+
+	function sendShot(game, player, x, y, isGoal, team_id, isTarget) {
+		let sog
+		if (isGoal && document.getElementById('isTarget').checked === false){
+			sog = true
+		} else if (isGoal === false && document.getElementById('isTarget').checked === true){
+			sog = true
+		}
+		let params = JSON.stringify({
+			"items":
+					[
+						{
+						"game_id": document.getElementById("team_id_data").getAttribute("game_id"),
+						"shot_x": parseInt(x),
+						"shot_y": parseInt(y),
+						"is_goal": isGoal,
+						"team_id": document.getElementById("team_id_data").getAttribute("team_id"),
+						"player_id": document.getElementById("team_id_data").getAttribute("player_id"),
+						"is_target": sog
+						}
+					]
+		})
+		const options = {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: 'Token 11609376-ff57-401e-88a4-53f4c0904fdb'
+			},
+			body: params
+		};
+		fetch('https://x125.ru/api/stats/inputshots', options)
+				.then(response => response.json())
+				.then(response => console.log(response))
+				.catch(err => console.error(err));
+		redraw(document.getElementById("team_id_data").getAttribute("team_id"))
+	}
+</script>
+
+<script id="API">
+	function APISendRequest(funcName, body) {
+		const options = {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: 'Token 11609376-ff57-401e-88a4-53f4c0904fd8'
+			},
+			body: body
+		};
+
+		return fetch('https://x125.ru/api/stats/'+funcName, options)
+				.catch(err => console.error(err))
+				.then(response => response.json())
+				.then(response => {
+					//console.log(response)
+					return response;
+					})
+
+	}
+	async function populateWithGame(urlParams) {
+		let game_id = urlParams['game_id']
+		const options = {
+			"game_id": game_id
+		}
+		const game = await APISendRequest("getcurrentgame", JSON.stringify(options))
+		transfer_team_data("game_id", game[0]["game_id"])
+		document.getElementById("hosts").innerHTML = game[0]["host"]
+		document.getElementById("hosts").setAttribute("team_id", game[0]["host_id"])
+		document.getElementById("team1").setAttribute("team_id", game[0]["host_id"])
+		document.getElementById("guests").innerHTML = game[0]["guest"]
+		document.getElementById("guests").setAttribute("team_id", game[0]["guest_id"])
+		document.getElementById("team2").setAttribute("team_id", game[0]["guest_id"])
+		document.getElementById("team1_label").innerHTML = game[0]["host"]
+		document.getElementById("team2_label").innerHTML = game[0]["guest"]
+		let hostShots = []
+		let guestShots = []
+		await redraw(game[0]["host_id"])
+
+	}
+
+</script>
+<script>
+	const script = document.createElement('script');
+	script.src='js/json.js'+ '?t=' + Date.now();
+	document.body.appendChild(script);
+	script.addEventListener('load', function() {
+
+		const script3 = document.createElement('script');
+		script3.src='./js/heatmap.js'+ '?t=' + Date.now();
+		document.body.appendChild(script3);
+		console.log('script loaded')
+		const script2 = document.createElement('script');
+		script2.src='js/main.js'+ '?t=' + Date.now();
+
+		document.body.appendChild(script2);
+		populateWithGame(getURLValues())
+		genProg()
+	});
+</script>
+</body>
+</html>

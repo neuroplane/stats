@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en" data-bs-theme="light">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Game stats</title>
+</head>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=PT+Serif&family=Roboto+Condensed:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+	body {
+		font-family: 'Roboto Condensed', sans-serif;
+	}
+	button {
+		touch-action: manipulation;
+	}
+
+	.bold {
+		font-family: 'Roboto Condensed', sans-serif;
+		font-weight: 700;
+	}
+
+	.thin {
+		font-family: 'Roboto Condensed', sans-serif;
+		font-weight: 300;
+	}
+
+</style>
+<body>
+<div class="container">
+	<div class="row mt-3">
+		<div id="games" class="col-md-4 offset-md-4">
+
+		</div>
+	</div>
+</div>
+
+<script id="cardGen">
+	function newCard(title, subtitle,text,url, game_id) {
+		const card = document.createElement("div");
+		card.setAttribute("class", "card mx-3 mb-3")
+		card.set
+		const cardBody = document.createElement("div")
+		cardBody.setAttribute("class", "card-body")
+		const cardTitle = document.createElement("h6")
+		cardTitle.setAttribute("class", "card-title bold")
+		cardTitle.innerHTML = title
+		const cardSubtitle = document.createElement("p")
+		cardSubtitle.setAttribute("class", "card-subtitle mb-2 text-body-secondary thin")
+		cardSubtitle.innerHTML = subtitle
+		const cardText = document.createElement("p")
+		cardText.setAttribute("class", "card-text")
+		cardText.innerHTML = text
+		const cardUrl = document.createElement("a")
+		cardUrl.href = url
+		cardUrl.setAttribute("class", "link-opacity-75 px-1")
+		cardUrl.setAttribute("target", "_blank")
+		const urlText = document.createTextNode("Просмотр");
+		cardUrl.appendChild(urlText)
+		const cardHeatmap = document.createElement("a")
+		cardHeatmap.setAttribute("class", "link-opacity-75 px-1")
+		cardHeatmap.href = "./index.html?game_id=" + game_id
+		const heatmapText = document.createTextNode("Тепловая карта");
+		cardHeatmap.appendChild(heatmapText)
+		cardBody.append(cardTitle, cardSubtitle, cardUrl, cardHeatmap)
+		card.append(cardBody)
+		document.getElementById("games").append(card)
+
+	}
+</script>
+<script id="renderGames">
+	async function renderGames(API) {
+		const gamesArray = await APISendRequest("getgames", "{}")
+		for (let i = 0; i < gamesArray.length; i++) {
+			console.log(gamesArray[i])
+			newCard(gamesArray[i]['host'] + gamesArray[i]['host_city'] + " - " + gamesArray[i]['guest'] + gamesArray[i]['guest_city'], gamesArray[i]['game_date'], gamesArray[i]['host'] + gamesArray[i]['guest'], gamesArray[i]['game_url'], gamesArray[i]['game_id'] )
+		}
+	}
+</script>
+<script id="newRequest">
+	function APISendRequest(funcName, body) {
+		const options = {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: 'Token 11609376-ff57-401e-88a4-53f4c0904fd8'
+			},
+			body: body
+		};
+
+		return fetch('https://x125.ru/api/stats/'+funcName, options)
+				.then(response => response.json())
+				.then(response => {
+					return response
+				})
+				.catch(err => console.error(err));
+	}
+	function gamesTable() {
+		APISendRequest("getgames", "{}")
+		const table = document.createElement("table", {is:"cool"})
+		table.setAttribute("class", "table")
+		document.getElementById("games").append(table)
+	}
+</script>
+<script>
+	const script = document.createElement('script');
+	script.src='js/json.js'+ '?t=' + Date.now();
+	document.body.appendChild(script);
+	script.addEventListener('load', function() {
+		//something to load
+		//gamesTable()
+		renderGames()
+	});
+</script>
+</body>
+
+</html>
