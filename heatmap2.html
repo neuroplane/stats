@@ -120,6 +120,7 @@
 				<form>
 					<div>
 						<div class="btn-group btn-group-sm"  style="width: 100%" role="group" aria-label="Basic example">
+
 							<input type="radio" class="btn-check" name="shots" id="isShot" autocomplete="off" onchange="checkType()">
 							<label class="btn btn-outline-primary" for="isShot">Бросок</label>
 
@@ -210,6 +211,7 @@
 </script>
 <script>
 	function openModal(x,y) {
+		checkType()
 		document.getElementById("backdrop").style.display = "block"
 		document.getElementById("exampleModal").style.display = "block"
 		document.getElementById("exampleModal").classList.add("show")
@@ -247,6 +249,16 @@
 		document.getElementById('isGoal').checked = false
 		document.getElementById('isShot').checked = false
 		document.getElementById('isTarget').checked = false
+	}
+</script>
+<script id="check_types">
+	function checkType() {
+		if ((document.getElementById('isGoal').checked === false && document.getElementById('isShot').checked === false && document.getElementById('isTarget').checked === false) ||
+				(document.getElementById('team1').checked === false && document.getElementById('team2').checked === false)) {
+			document.getElementById("sendData").disabled = true
+		} else {
+			document.getElementById("sendData").disabled = false
+		}
 	}
 </script>
 <script id="sendCoordinates">

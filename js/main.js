@@ -80,6 +80,7 @@ function getCursorPosition(canvas, event) {
     const rect = canvas.getBoundingClientRect()
     const x = Math.round((event.clientX - rect.left) / (rect.right - rect.left) * canvas.width)
     const y = Math.round((event.clientY - rect.top) / (rect.bottom - rect.top) * canvas.height)
+
     openModal(x,y)
     console.log(x, y)
     //drawPoint(x, y)
