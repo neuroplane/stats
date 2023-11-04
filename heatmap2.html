@@ -38,55 +38,6 @@
 		margin-bottom: 0.2em;
 		margin-right: 0.2em;
 	}
-	.progbar{
-		margin-bottom: 0.2em;
-		margin-inline: 1px;
-	}
-
-	.stats-inline {
-		display: inline-flex;
-		width: 100%;
-	}
-
-	#host_shots_prog {
-		background-color: #ff7c7c; !important;
-	}
-
-	#host_shots_on_goal_prog {
-		background-color: #ff4040; !important;
-	}
-	#host_goals_prog {
-		background-color: #b02424; !important;
-	}
-
-	#guest_shots_prog {
-		background-color: #759aff; !important;
-	}
-
-	#guest_shots_on_goal_prog {
-		background-color: #2964ee; !important;
-	}
-	#guest_goals_prog {
-		background-color: #0d3db7; !important;
-	}
-	/*#hosts {
-		background-color: #ffafaf;
-		color: #2f2f2f;
-	}
-	#guests {
-		background-color: #7c8dff;
-	}*/
-	.types {
-		width: 30%;
-		background-color: #f3f3f3;
-		color: black;
-		text-align: left;
-	}
-	.team{
-		height: 1em; !important;
-	}
-
-
 
 </style>
 <body>
@@ -191,9 +142,9 @@
 	function returnShootingTeam() {
 		if (document.getElementById('homeRadio').checked === true){
 			return parseInt(document.getElementById('homeRadio').dataset.team)
-		} else {
+		} else if (document.getElementById('awayRadio').checked === true){
 			return parseInt(document.getElementById('awayRadio').dataset.team)
-		}
+		} else console.log("NO SELECTION")
 	}
 </script>
 <script id="getUrlParameters">
@@ -289,9 +240,6 @@
 </script>
 <script id="checkShotTypes">
 	function checkShotTypes() {
-		const shotBool = false;
-		const targetBool = false;
-		const goalBool = false;
 		if (document.getElementById('isShot').checked === false && document.getElementById('isTarget').checked === false && document.getElementById('isGoal').checked === false){
 
 		}
@@ -311,7 +259,7 @@
 		document.getElementById("team_id_data").setAttribute(attribute, data)
 	}
 
-	function sendShot(game, player, x, y, isGoal, team_id, isTarget) {
+	function sendShot(game, player, x, y, isGoal) {
 		let sog
 		if (isGoal && document.getElementById('isTarget').checked === false){
 			sog = true
