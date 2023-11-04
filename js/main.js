@@ -80,8 +80,6 @@ async function redraw(team) {
     }
 }
 
-
-
 function getCursorPosition(canvas, event) {
     const rect = canvas.getBoundingClientRect()
     const x = Math.round((event.clientX - rect.left) / (rect.right - rect.left) * canvas.width)
@@ -90,7 +88,6 @@ function getCursorPosition(canvas, event) {
     console.log(x, y)
     drawPoint(x, y)
     console.log(heatData)
-
 }
 /*---------- s3----------*/
 const canvas_heatmap = document.querySelector('#goals')
