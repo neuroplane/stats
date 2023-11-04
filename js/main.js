@@ -71,12 +71,8 @@ async function redraw(team) {
     const teamShots = await APISendRequest("getteamheatmap", JSON.stringify({"game_id": getURLValues()['game_id'], "team_id": team}))
     for (const point of teamShots) {
         drawPoint(point['shot_x'], point['shot_y'])
-        if (point['is_target'] === true){
-            draw_text(point['shot_x'], point['shot_y'], "🔘", "#bd0022", 20)
-        }
-        if (point['is_goal'] === true){
-            draw_text(point['shot_x'], point['shot_y'], "🔴", "#0040ff", 30)
-        }
+        if (point['is_target'] === true){draw_text(point['shot_x'], point['shot_y'], "🔘", "#bd0022", 20)}
+        if (point['is_goal'] === true){draw_text(point['shot_x'], point['shot_y'], "🔴", "#0040ff", 30)}
     }
 }
 
@@ -84,9 +80,9 @@ function getCursorPosition(canvas, event) {
     const rect = canvas.getBoundingClientRect()
     const x = Math.round((event.clientX - rect.left) / (rect.right - rect.left) * canvas.width)
     const y = Math.round((event.clientY - rect.top) / (rect.bottom - rect.top) * canvas.height)
-    //openModal(x,y)
+    openModal(x,y)
     console.log(x, y)
-    drawPoint(x, y)
+    //drawPoint(x, y)
     console.log(heatData)
 }
 /*---------- s3----------*/
