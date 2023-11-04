@@ -94,7 +94,7 @@
 <div class="container">
 	<div class="row">
 		<div class="col-md-6 offset-md-3">
-			<div id="main_id" class="">
+			<div id="main_id" class="mt-1 render position-absolute top-10 start-50 translate-middle-x">
 				<canvas class="mt-1 render position-absolute top-10 start-50 translate-middle-x" id='my-canvas' ></canvas>
 				<canvas class="mt-1 render position-absolute top-10 start-50 translate-middle-x" id='heatmap' ></canvas>
 				<canvas class="mt-1 render position-absolute top-10 start-50 translate-middle-x" id='goals' ></canvas>
@@ -134,17 +134,17 @@
 						</div>
 					</div>
 					<hr>
-					<div>
-						<div class="btn-group btn-group-sm"  style="width: 100%" role="group" aria-label="Basic example">
-							<input type="radio" class="btn-check btn-sm" name="teams" id="team1" autocomplete="off" onchange="checkType();transfer_team_data('team_id', this.getAttribute('team_id'))">
-							<label id="team1_label"  class="btn btn-outline-danger" for="team1"></label>
-
-							<input type="radio" class="btn-check" name="teams" id="team2" autocomplete="off" onchange="checkType();transfer_team_data('team_id', this.getAttribute('team_id'))">
-							<label id="team2_label" class="btn btn-outline-primary" for="team2"></label>
-						</div>
-						<hr>
-						<div id="players">
-						</div>
+					<div class="form-check">
+						<input class="form-check-input" data-team=1 type="radio" name="flexRadioDefault" id="homeRadio">
+						<label class="form-check-label" for="homeRadio">
+							Аланские барсы
+						</label>
+					</div>
+					<div class="form-check">
+						<input class="form-check-input" data-team=5 type="radio" name="flexRadioDefault" id="awayRadio">
+						<label class="form-check-label" for="awayRadio">
+							Наследие
+						</label>
 					</div>
 				</form>
 				<!-- FORM CONTROL -->
@@ -159,13 +159,49 @@
 	</div>
 </div>
 <div class="modal-backdrop fade show" id="backdrop" style="display: none;"></div>
+
+<script id="api_requests">
+	const home_array = [];
+	const away_array = [];
+
+	async function getAllShots(game_id) {
+		const homeTeam = parseInt(getURLValues()['host_id'])
+		const awayTeam = parseInt(getURLValues()['guest_id'])
+		console.log(homeTeam, awayTeam)
+		let options = {"game_id": game_id}
+		const gameShots = await APISendRequest("getheatmap", JSON.stringify(options))
+		//const home_array = [];
+		//const away_array = [];
+		for (const shot of gameShots) {
+			const team_id = shot['team_id'];
+			if (team_id === homeTeam) {
+				home_array.push(shot);
+			} else if (team_id === awayTeam) {
+				away_array.push(shot);
+			}
+		}
+		console.log(home_array);  // [{'team_id': 1}]
+		console.log(away_array);  // [{'team_id': 2}]
+	}
+
+
+
+</script>
+<script id="check_team">
+	function returnShootingTeam() {
+		if (document.getElementById('homeRadio').checked === true){
+			return parseInt(document.getElementById('homeRadio').dataset.team)
+		} else {
+			return parseInt(document.getElementById('awayRadio').dataset.team)
+		}
+	}
+</script>
 <script id="getUrlParameters">
 	function getURLValues() {
 		const search = window.location.search.replace(/^\?/, '').replace(/\+/g, ' ');
 		const values = {};
 		if (search.length) {
 			let part, parts = search.split('&');
-
 			let i = 0, iLen = parts.length;
 			for (; i<iLen; i++ ) {
 				part = parts[i].split('=');
@@ -232,8 +268,8 @@
 		document.getElementById("backdrop").style.display = "none"
 		document.getElementById("exampleModal").style.display = "none"
 		document.getElementById("exampleModal").classList.remove("show")
-		document.getElementById('team1').checked = false
-		document.getElementById('team2').checked = false
+		document.getElementById('homeRadio').checked = false
+		document.getElementById('awayRadio').checked = false
 		console.log(heatData)
 		document.getElementById('isGoal').checked = false
 		document.getElementById('isShot').checked = false
@@ -244,21 +280,30 @@
 		document.getElementById("backdrop").style.display = "none"
 		document.getElementById("exampleModal").style.display = "none"
 		document.getElementById("exampleModal").classList.remove("show")
-		document.getElementById('team1').checked = false
-		document.getElementById('team2').checked = false
+		document.getElementById('homeRadio').checked = false
+		document.getElementById('awayRadio').checked = false
 		document.getElementById('isGoal').checked = false
 		document.getElementById('isShot').checked = false
 		document.getElementById('isTarget').checked = false
 	}
 </script>
+<script id="checkShotTypes">
+	function checkShotTypes() {
+		const shotBool = false;
+		const targetBool = false;
+		const goalBool = false;
+		if (document.getElementById('isShot').checked === false && document.getElementById('isTarget').checked === false && document.getElementById('isGoal').checked === false){
+
+		}
+	}
+</script>
 <script id="check_types">
 	function checkType() {
-		if ((document.getElementById('isGoal').checked === false && document.getElementById('isShot').checked === false && document.getElementById('isTarget').checked === false) ||
-				(document.getElementById('team1').checked === false && document.getElementById('team2').checked === false)) {
-			document.getElementById("sendData").disabled = true
-		} else {
-			document.getElementById("sendData").disabled = false
-		}
+		document.getElementById("sendData").disabled = (document.getElementById('isGoal').checked === false &&
+						document.getElementById('isShot').checked === false &&
+						document.getElementById('isTarget').checked === false) ||
+				(document.getElementById('homeRadio').checked === false && document.getElementById('awayRadio').checked === false);
+		console.log(returnShootingTeam(),document.getElementById('isShot').checked,document.getElementById('isTarget').checked,document.getElementById('isGoal').checked)
 	}
 </script>
 <script id="sendCoordinates">
@@ -320,8 +365,8 @@
 					return response;
 					})
 	}
-
 </script>
+
 <script>
 	const script = document.createElement('script');
 	script.src='js/json.js'+ '?t=' + Date.now();
@@ -334,6 +379,7 @@
 		const script2 = document.createElement('script');
 		script2.src='js/main.js'+ '?t=' + Date.now();
 		document.body.appendChild(script2);
+		getAllShots(getURLValues()['game_id'])
 	});
 </script>
 </body>
