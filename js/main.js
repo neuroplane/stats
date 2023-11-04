@@ -28,16 +28,15 @@ function draw_text(x,y,text, color, sizept) {
     ctx.restore()
 }
 
-//alert(to_y(4))
 let heatData = []
 const heat = simpleheat('heatmap');
 /*  DRAW POINT    */
 function drawPoint(x,y) {
     heat.data(heatData);
-    const point = [x,y, 0.4]
+    const point = [parseInt(x), parseInt(y) , 0.15]
     heat.add(point);
     heat.resize()
-    heat.draw(0.05);
+    heat.draw();
 }
 
 async function restore(urlParams) {
@@ -88,27 +87,15 @@ function getCursorPosition(canvas, event) {
     const x = Math.round((event.clientX - rect.left) / (rect.right - rect.left) * canvas.width)
     const y = Math.round((event.clientY - rect.top) / (rect.bottom - rect.top) * canvas.height)
     openModal(x,y)
+    console.log(x, y)
+    //drawPoint(x, y)
+    console.log(heatData)
 
 }
 /*---------- s3----------*/
 const canvas_heatmap = document.querySelector('#goals')
+
+/* ОБРАБОТЧИК КЛИКА */
 canvas_heatmap.addEventListener('mouseup', function(e) {
     getCursorPosition(canvas_heatmap, e)
 })
-/*-------------- API SEND DATA GET RESPONSE --------------------*/
-/*function APISendRequest(funcName, body) {
-    const options = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Token 11609376-ff57-401e-88a4-53f4c0904fd8'
-        },
-        body: body
-    };
-
-    return fetch('https://x125.ru/api/stats/'+funcName, options)
-        .then(response => response.json())
-        .then(response => {return response})
-        .catch(err => console.error(err));
-}
-*/

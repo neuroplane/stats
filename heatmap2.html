@@ -98,6 +98,7 @@
 				<canvas class="mt-1 render position-absolute top-10 start-50 translate-middle-x" id='my-canvas' ></canvas>
 				<canvas class="mt-1 render position-absolute top-10 start-50 translate-middle-x" id='heatmap' ></canvas>
 				<canvas class="mt-1 render position-absolute top-10 start-50 translate-middle-x" id='goals' ></canvas>
+				<!-- обработка клика происходит в конце main.js -->
 			</div>
 		</div>
 	</div>
@@ -108,10 +109,55 @@
 
 
 <!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-sm modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header">
+				<small class="modal-title fs-6" id="exampleModalLabel">Бросок [<span id="coordinate_x"></span>.<span id="coordinate_y"></span>]</small>
+			</div>
+			<div class="modal-body">
+				<!-- FORM CONTROL -->
+				<form>
+					<div>
+						<div class="btn-group btn-group-sm"  style="width: 100%" role="group" aria-label="Basic example">
+							<input type="radio" class="btn-check" name="shots" id="isShot" autocomplete="off" onchange="checkType()">
+							<label class="btn btn-outline-primary" for="isShot">Бросок</label>
+
+							<input type="radio" class="btn-check" name="shots" id="isTarget" autocomplete="off" onchange="checkType()">
+							<label class="btn btn-outline-warning" for="isTarget">Створ</label>
+
+							<input type="radio" class="btn-check btn-sm" name="shots" id="isGoal" autocomplete="off" onchange="checkType()">
+							<label class="btn btn-outline-danger" for="isGoal">Гол</label>
 
 
+						</div>
+					</div>
+					<hr>
+					<div>
+						<div class="btn-group btn-group-sm"  style="width: 100%" role="group" aria-label="Basic example">
+							<input type="radio" class="btn-check btn-sm" name="teams" id="team1" autocomplete="off" onchange="checkType();transfer_team_data('team_id', this.getAttribute('team_id'))">
+							<label id="team1_label"  class="btn btn-outline-danger" for="team1"></label>
 
-<!------------------------------------------------>
+							<input type="radio" class="btn-check" name="teams" id="team2" autocomplete="off" onchange="checkType();transfer_team_data('team_id', this.getAttribute('team_id'))">
+							<label id="team2_label" class="btn btn-outline-primary" for="team2"></label>
+						</div>
+						<hr>
+						<div id="players">
+						</div>
+					</div>
+				</form>
+				<!-- FORM CONTROL -->
+
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="resetModal()">Отмена</button>
+				<button id="sendData" type="button" class="btn btn-primary" onclick="closeModal()">Сохранить</button>
+			</div>
+			<span id="team_id_data"></span>
+		</div>
+	</div>
+</div>
+<div class="modal-backdrop fade show" id="backdrop" style="display: none;"></div>
 <script id="getUrlParameters">
 	function getURLValues() {
 		const search = window.location.search.replace(/^\?/, '').replace(/\+/g, ' ');
@@ -173,34 +219,25 @@
 	const shots = []
 	function getCoordinates(log) {
 		let outputCoordinates = []
-		for (let i = 0; i < log.length; i++) {
-			outputCoordinates.push([log[i][0], log[i][1]])
-		}
+		for (let i = 0; i < log.length; i++) {outputCoordinates.push([log[i][0], log[i][1]])}
 		return outputCoordinates
 	}
+
 	function closeModal() {
 		let point_x = document.getElementById("coordinate_x").innerHTML
 		let point_y = document.getElementById("coordinate_y").innerHTML
 		drawPoint(point_x, point_y)
-		if (document.getElementById('isGoal').checked === true){
-			draw_text(point_x, point_y, "G")
-		}
 		document.getElementById("backdrop").style.display = "none"
 		document.getElementById("exampleModal").style.display = "none"
 		document.getElementById("exampleModal").classList.remove("show")
 		document.getElementById('team1').checked = false
 		document.getElementById('team2').checked = false
-
-		//document.getElementById("player").selectedIndex = 0;
-		shots.push([parseInt(point_x),parseInt(point_y),document.getElementById('isGoal').checked])
-		console.log(shots)
-		console.log(getCoordinates(shots))
-		sendShot("4", "1", point_x, point_y, document.getElementById('isGoal').checked, document.getElementById('isTarget').checked)
-		redraw(12)
+		console.log(heatData)
 		document.getElementById('isGoal').checked = false
 		document.getElementById('isShot').checked = false
 		document.getElementById('isTarget').checked = false
 	}
+
 	function resetModal() {
 		document.getElementById("backdrop").style.display = "none"
 		document.getElementById("exampleModal").style.display = "none"
@@ -252,7 +289,7 @@
 				.then(response => response.json())
 				.then(response => console.log(response))
 				.catch(err => console.error(err));
-		redraw(document.getElementById("team_id_data").getAttribute("team_id"))
+		//redraw(document.getElementById("team_id_data").getAttribute("team_id"))
 	}
 </script>
 
