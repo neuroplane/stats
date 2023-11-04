@@ -33,7 +33,7 @@ const heat = simpleheat('heatmap');
 /*  DRAW POINT    */
 function drawPoint(x,y) {
     heat.data(heatData);
-    const point = [parseInt(x), parseInt(y) , 0.15]
+    const point = [parseInt(x), parseInt(y) ]
     heat.add(point);
     heat.resize()
     heat.draw();
@@ -86,9 +86,9 @@ function getCursorPosition(canvas, event) {
     const rect = canvas.getBoundingClientRect()
     const x = Math.round((event.clientX - rect.left) / (rect.right - rect.left) * canvas.width)
     const y = Math.round((event.clientY - rect.top) / (rect.bottom - rect.top) * canvas.height)
-    openModal(x,y)
+    //openModal(x,y)
     console.log(x, y)
-    //drawPoint(x, y)
+    drawPoint(x, y)
     console.log(heatData)
 
 }

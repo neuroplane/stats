@@ -106,9 +106,9 @@ simpleheat.prototype = {
         // draw a grayscale heatmap by putting a blurred circle at each data point
         for (let i = 0, len = this._data.length, p; i < len; i++) {
             p = this._data[i];
-            ctx.globalAlpha = Math.min(Math.max(p[2] / this._max, minOpacity === undefined ? 0.39 : minOpacity), 1);
+            //ctx.globalAlpha = Math.min(Math.max(p[2] / this._max, minOpacity === undefined ? 0.39 : minOpacity), 1);
+            ctx.globalAlpha = 0.4
             ctx.drawImage(this._circle, p[0] - this._r, p[1] - this._r);
-            console.log(ctx.globalAlpha)
         }
 
         // colorize the heatmap, using opacity value of each pixel to get the right color from our gradient
