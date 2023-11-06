@@ -43,20 +43,34 @@
 <body>
 
 <div class="container">
-	<div class="row gx-1 mt-2">
-		<div class="col-6 col-md-6 col-s-6 offset-md-3">
+	<div class="row gx-5 mt-3 mb-4">
+		<div class="col-6 col-md-6 col-s-6 col-l-6 col-xl-6 ">
 
-			<div class="d-grid  d-md-block">
-				<input type="radio" data-team="2" class="btn-check" name="options-teams" id="homeRadioInput" autocomplete="off" onchange="console.log(this)">
-				<label id="homeTeamButton" class="btn btn-outline-danger" for="homeRadioInput">&nbsp</label>
+			<div class="d-grid  d-block position-relative">
+				<input type="radio" data-team="2" class="btn-check" name="options-teams" id="homeRadioInput" autocomplete="off" onchange="drawShots(home_array)">
+				<label id="homeTeamButton" class="btn btn-outline-danger " for="homeRadioInput">&nbsp
+
+				</label>
+				<span class="position-absolute top-100 start-50 translate-middle badge bg-danger mt-3">
+					<span id="homeStats">&nbsp</span>
+			    </span>
+				<span class="position-absolute top-50 start-100 translate-middle badge bg-danger">
+					<span id="homeScore">&nbsp</span>
+			    </span>
 			</div>
 
 
 		</div>
-		<div class="col-6 col-md-6 col-s-6 offset-md-3">
-			<div class="d-grid  d-md-block">
-				<input type="radio" data-team="1" class="btn-check" name="options-teams" id="awayRadioInput" autocomplete="off" onchange="console.log(this)">
+		<div class="col-6 col-md-6 col-s-6 col-l-6 col-xl-6">
+			<div class="d-grid  d-block position-relative">
+				<input type="radio" data-team="1" class="btn-check" name="options-teams" id="awayRadioInput" autocomplete="off" onchange="drawShots(away_array)">
 				<label id="awayTeamButton" class="btn btn-outline-primary" for="awayRadioInput">&nbsp</label>
+				<span class="position-absolute top-100 start-50 translate-middle badge bg-primary  mt-3">
+			        <span id="awayStats">&nbsp</span>
+			    </span>
+				<span class="position-absolute top-50 start-0 translate-middle badge bg-primary">
+			        <span id="awayScore">&nbsp</span>
+			    </span>
 			</div>
 
 
@@ -160,10 +174,25 @@
 		let guestShots = []
 		//await redraw(game[0]["host_id"])
 		document.getElementById("homeTeamButton").innerHTML = game[0]["host"]
+		document.getElementById("homeRadioInput").dataset.team = game[0]["host_id"]
 		document.getElementById("awayTeamButton").innerHTML = game[0]["guest"]
+		document.getElementById("awayRadioInput").dataset.team = game[0]["guest_id"]
 		console.log(game)
 	}
 
+	async function getShotsStats() {
+		let opts = {
+			"game_id": getURLValues()['game_id'],
+			"host_id": getURLValues()['host_id'],
+			"guest_id": getURLValues()['guest_id']
+		}
+		const stats = await APISendRequest("getcurrentgamestats", JSON.stringify(opts))
+		document.getElementById("awayStats").innerText = stats['g_goals'] + "-" + stats['g_target'] + "-" + stats['g_shots']
+		document.getElementById("awayScore").innerText = stats['g_goals']
+		document.getElementById("homeStats").innerText = stats['h_goals'] + "-" + stats['h_target'] + "-" + stats['h_shots']
+		document.getElementById("homeScore").innerText = stats['h_goals']
+		return stats
+	}
 
 </script>
 
@@ -261,6 +290,17 @@
 		let point_x = document.getElementById("coordinate_x").innerHTML
 		let point_y = document.getElementById("coordinate_y").innerHTML
 		drawPoint(point_x, point_y)
+		let data = {'player_id': 47,
+			'game_id': getURLValues()['game_id'],
+			'team_id': getURLValues()['t'],
+			'x': point_x,
+			'y': point_y,
+
+			'isShot': document.getElementById('isShot').checked,
+			'isTarget': document.getElementById('isTarget').checked,
+			'isGoal': document.getElementById('isGoal').checked,
+
+		}
 		document.getElementById("backdrop").style.display = "none"
 		document.getElementById("exampleModal").style.display = "none"
 		document.getElementById("exampleModal").classList.remove("show")
@@ -270,6 +310,8 @@
 		document.getElementById('isGoal').checked = false
 		document.getElementById('isShot').checked = false
 		document.getElementById('isTarget').checked = false
+		console.log(data)
+		sendShot(data)
 	}
 
 	function resetModal() {
@@ -303,44 +345,7 @@
 	}
 </script>
 <script id="sendCoordinates">
-	function transfer_team_data(attribute, data) {
-		document.getElementById("team_id_data").setAttribute(attribute, data)
-	}
 
-	function sendShot(game, player, x, y, isGoal) {
-		let sog
-		if (isGoal && document.getElementById('isTarget').checked === false){
-			sog = true
-		} else if (isGoal === false && document.getElementById('isTarget').checked === true){
-			sog = true
-		}
-		let params = JSON.stringify({
-			"items":
-					[
-						{
-						"game_id": document.getElementById("team_id_data").getAttribute("game_id"),
-						"shot_x": parseInt(x),
-						"shot_y": parseInt(y),
-						"is_goal": isGoal,
-						"team_id": document.getElementById("team_id_data").getAttribute("team_id"),
-						"player_id": document.getElementById("team_id_data").getAttribute("player_id"),
-						"is_target": sog
-						}
-					]
-		})
-		const options = {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: 'Token 11609376-ff57-401e-88a4-53f4c0904fdb'
-			},
-			body: params
-		};
-		fetch('https://x125.ru/api/stats/inputshots', options)
-				.then(response => response.json())
-				.then(response => console.log(response))
-				.catch(err => console.error(err));
-	}
 </script>
 
 <script id="API">
@@ -363,6 +368,31 @@
 	}
 </script>
 
+<script id="sendShot">
+	function sendShot(data) {
+
+		let params = JSON.stringify({
+			"items":
+					[
+						data
+					]
+		})
+		const options = {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: 'Token 11609376-ff57-401e-88a4-53f4c0904fdb'
+			},
+			body: params
+		};
+		fetch('https://x125.ru/api/stats/inputshots', options)
+				.then(response => response.json())
+				.then(response => console.log(response))
+				.catch(err => console.error(err));
+		redraw(document.getElementById("team_id_data").getAttribute("team_id"))
+	}
+</script>
+
 <script>
 	const script = document.createElement('script');
 	script.src='js/json.js'+ '?t=' + Date.now();
@@ -375,6 +405,7 @@
 		const script2 = document.createElement('script');
 		script2.src='js/main.js'+ '?t=' + Date.now();
 		document.body.appendChild(script2);
+		getShotsStats()
 		restore()
 		getAllShots(getURLValues()['game_id'])
 	});
