@@ -39,6 +39,7 @@ function drawPoint(x,y) {
     heat.draw();
 }
 
+/*
 async function restore(urlParams) {
     let game_id = urlParams['game_id']
     const options = {
@@ -58,7 +59,7 @@ async function restore(urlParams) {
     let guestShots = []
     await redraw(game[0]["host_id"])
 }
-
+*/
 async function redraw(team) {
     heatData = []
     let canvas = document.querySelector('#goals');

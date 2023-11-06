@@ -43,6 +43,25 @@
 <body>
 
 <div class="container">
+	<div class="row gx-1 mt-2">
+		<div class="col-6 col-md-6 col-s-6 offset-md-3">
+
+			<div class="d-grid  d-md-block">
+				<input type="radio" data-team="2" class="btn-check" name="options-teams" id="homeRadioInput" autocomplete="off" onchange="console.log(this)">
+				<label id="homeTeamButton" class="btn btn-outline-danger" for="homeRadioInput">&nbsp</label>
+			</div>
+
+
+		</div>
+		<div class="col-6 col-md-6 col-s-6 offset-md-3">
+			<div class="d-grid  d-md-block">
+				<input type="radio" data-team="1" class="btn-check" name="options-teams" id="awayRadioInput" autocomplete="off" onchange="console.log(this)">
+				<label id="awayTeamButton" class="btn btn-outline-primary" for="awayRadioInput">&nbsp</label>
+			</div>
+
+
+		</div>
+	</div>
 	<div class="row">
 		<div class="col-md-6 offset-md-3">
 			<div id="main_id" class="mt-1 render position-absolute top-10 start-50 translate-middle-x">
@@ -61,45 +80,41 @@
 
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-sm modal-dialog-centered">
+	<div class="modal-dialog  modal-dialog-centered">
 		<div class="modal-content">
 			<div class="modal-header">
 				<small class="modal-title fs-6" id="exampleModalLabel">Бросок [<span id="coordinate_x"></span>.<span id="coordinate_y"></span>]</small>
 			</div>
 			<div class="modal-body">
 				<!-- FORM CONTROL -->
+
 				<form>
-					<div>
-						<div class="btn-group btn-group-sm"  style="width: 100%" role="group" aria-label="Basic example">
+						<div  aria-label="Basic example">
+							<div class="row gy-3 gx-0">
+								<input type="radio" class="btn-check" name="shots" id="isShot" autocomplete="off" onchange="checkType()">
+								<label class="btn btn-outline-primary" for="isShot">Бросок по воротам</label>
 
-							<input type="radio" class="btn-check" name="shots" id="isShot" autocomplete="off" onchange="checkType()">
-							<label class="btn btn-outline-primary" for="isShot">Бросок</label>
+								<input type="radio" class="btn-check" name="shots" id="isTarget" autocomplete="off" onchange="checkType()">
+								<label class="btn btn-outline-primary" for="isTarget">Попадание в створ</label>
 
-							<input type="radio" class="btn-check" name="shots" id="isTarget" autocomplete="off" onchange="checkType()">
-							<label class="btn btn-outline-primary" for="isTarget">Створ</label>
-
-							<input type="radio" class="btn-check btn-sm" name="shots" id="isGoal" autocomplete="off" onchange="checkType()">
-							<label class="btn btn-outline-primary" for="isGoal">Гол</label>
-
+								<input type="radio" class="btn-check btn-sm" name="shots" id="isGoal" autocomplete="off" onchange="checkType()">
+								<label class="btn btn-outline-primary" for="isGoal">Гол</label>
+							</div>
 
 						</div>
-					</div>
 					<hr>
 					<div class="form-check">
-						<input class="form-check-input" data-team=1 type="radio" name="flexRadioDefault" id="homeRadio" onchange="checkType()">
+						<input class="form-check-input " data-team=1 type="radio" name="flexRadioDefault" id="homeRadio" onchange="checkType()">
 						<label class="form-check-label" for="homeRadio">
 							Аланские барсы
 						</label>
 					</div>
 					<div class="form-check">
 						<input class="form-check-input" data-team=5 type="radio" name="flexRadioDefault" id="awayRadio" onchange="checkType()">
-						<label class="form-check-label" for="awayRadio">
-							Наследие
-						</label>
+						<label class="form-check-label" for="awayRadio">Наследие</label>
 					</div>
 				</form>
 				<!-- FORM CONTROL -->
-
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="resetModal()">Отмена</button>
@@ -135,9 +150,39 @@
 		console.log(away_array);  // [{'team_id': 2}]
 	}
 
+	async function restore(urlParams) {
+		let game_id = getURLValues()['game_id']
+		const options = {
+			"game_id": game_id
+		}
+		const game = await APISendRequest("getcurrentgame", JSON.stringify(options))
+		let hostShots = []
+		let guestShots = []
+		//await redraw(game[0]["host_id"])
+		document.getElementById("homeTeamButton").innerHTML = game[0]["host"]
+		document.getElementById("awayTeamButton").innerHTML = game[0]["guest"]
+		console.log(game)
+	}
 
 
 </script>
+
+<script id="drawing">
+	function drawShots(array) {
+		heatData = []
+		let canvas = document.querySelector('#goals');
+		const context = canvas.getContext('2d');
+		context.clearRect(0, 0, canvas.width, canvas.height);
+		heat.clear()
+
+		for (const point of array) {
+			drawPoint(point['shot_x'], point['shot_y'])
+			if (point['is_target'] === true){draw_text(point['shot_x'], point['shot_y'], "🔘", "#bd0022", 20)}
+			if (point['is_goal'] === true){draw_text(point['shot_x'], point['shot_y'], "🔴", "#0040ff", 30)}
+		}
+	}
+</script>
+
 <script id="check_team">
 	function returnShootingTeam() {
 		if (document.getElementById('homeRadio').checked === true){
@@ -330,6 +375,7 @@
 		const script2 = document.createElement('script');
 		script2.src='js/main.js'+ '?t=' + Date.now();
 		document.body.appendChild(script2);
+		restore()
 		getAllShots(getURLValues()['game_id'])
 	});
 </script>
