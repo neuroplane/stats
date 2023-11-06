@@ -86,13 +86,13 @@
 					</div>
 					<hr>
 					<div class="form-check">
-						<input class="form-check-input" data-team=1 type="radio" name="flexRadioDefault" id="homeRadio">
+						<input class="form-check-input" data-team=1 type="radio" name="flexRadioDefault" id="homeRadio" onchange="checkType()">
 						<label class="form-check-label" for="homeRadio">
 							Аланские барсы
 						</label>
 					</div>
 					<div class="form-check">
-						<input class="form-check-input" data-team=5 type="radio" name="flexRadioDefault" id="awayRadio">
+						<input class="form-check-input" data-team=5 type="radio" name="flexRadioDefault" id="awayRadio" onchange="checkType()">
 						<label class="form-check-label" for="awayRadio">
 							Наследие
 						</label>
@@ -247,10 +247,13 @@
 </script>
 <script id="check_types">
 	function checkType() {
-		document.getElementById("sendData").disabled = (document.getElementById('isGoal').checked === false &&
+		document.getElementById("sendData").disabled =
+				(       document.getElementById('isGoal').checked === false &&
 						document.getElementById('isShot').checked === false &&
 						document.getElementById('isTarget').checked === false) ||
-				(document.getElementById('homeRadio').checked === false && document.getElementById('awayRadio').checked === false);
+
+				(       document.getElementById('homeRadio').checked === false &&
+						document.getElementById('awayRadio').checked === false);
 		console.log(returnShootingTeam(),document.getElementById('isShot').checked,document.getElementById('isTarget').checked,document.getElementById('isGoal').checked)
 	}
 </script>
