@@ -292,13 +292,13 @@
 		drawPoint(point_x, point_y)
 		let data = {'player_id': 47,
 			'game_id': getURLValues()['game_id'],
-			'team_id': getURLValues()['t'],
-			'x': point_x,
-			'y': point_y,
+			'team_id': returnShootingTeam(),
+			'shot_x': point_x,
+			'shot_y': point_y,
 
-			'isShot': document.getElementById('isShot').checked,
-			'isTarget': document.getElementById('isTarget').checked,
-			'isGoal': document.getElementById('isGoal').checked,
+			'is_shot': document.getElementById('isShot').checked,
+			'is_target': document.getElementById('isTarget').checked,
+			'is_goal': document.getElementById('isGoal').checked,
 
 		}
 		document.getElementById("backdrop").style.display = "none"
@@ -389,7 +389,7 @@
 				.then(response => response.json())
 				.then(response => console.log(response))
 				.catch(err => console.error(err));
-		redraw(document.getElementById("team_id_data").getAttribute("team_id"))
+		//redraw(document.getElementById("team_id_data").getAttribute("team_id"))
 	}
 </script>
 
