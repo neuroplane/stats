@@ -2,7 +2,7 @@
 
 let screen_height = window.innerHeight
 let screen_width = screen_height/2.2;
-console.log(screen_width + ", " + screen_height)
+//console.log(screen_width + ", " + screen_height)
 
 const c = document.getElementById("heatmap");
 const ctx = c.getContext("2d");
@@ -83,9 +83,7 @@ function getCursorPosition(canvas, event) {
     const y = Math.round((event.clientY - rect.top) / (rect.bottom - rect.top) * canvas.height)
 
     openModal(x,y)
-    console.log(x, y)
     //drawPoint(x, y)
-    console.log(heatData)
 }
 /*---------- s3----------*/
 const canvas_heatmap = document.querySelector('#goals')
