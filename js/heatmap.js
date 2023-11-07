@@ -17,7 +17,7 @@ function simpleheat(canvas) {
 
 simpleheat.prototype = {
 
-    defaultRadius: 90,
+    defaultRadius: 70,
 
     defaultGradient: {
         0.55: 'blue',
@@ -48,7 +48,7 @@ simpleheat.prototype = {
     },
 
     radius: function (r, blur) {
-        blur = blur === undefined ? 115 : blur;
+        blur = blur === undefined ? 70 : blur;
 
         // create a grayscale blurred circle image that we'll use for drawing points
         const circle = this._circle = this._createCanvas(),
