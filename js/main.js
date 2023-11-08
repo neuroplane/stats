@@ -92,3 +92,12 @@ const canvas_heatmap = document.querySelector('#goals')
 canvas_heatmap.addEventListener('mouseup', function(e) {
     getCursorPosition(canvas_heatmap, e)
 })
+const digitArray = [];
+const elements = document.querySelectorAll('.digit');
+elements.forEach(element => {
+    element.addEventListener('click', () => {
+        // Code to be executed when the element is clicked
+        digitArray.push(element.dataset.digit)
+        document.getElementById("playerID").innerHTML = element.dataset.digit
+    });
+});

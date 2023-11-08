@@ -94,45 +94,107 @@
 
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-	<div class="modal-dialog  modal-dialog-centered">
+	<div class="modal-dialog modal-sm  modal-dialog-centered">
 		<div class="modal-content">
-			<div class="modal-header">
+			<!-- FORM CONTROL -->
+			<div class="modal-header visually-hidden">
 				<small class="modal-title fs-6" id="exampleModalLabel">Бросок [<span id="coordinate_x"></span>.<span id="coordinate_y"></span>]</small>
 			</div>
+			<!-- FORM CONTROL -->
 			<div class="modal-body">
-				<!-- FORM CONTROL -->
+					<div class="container text-center">
+							<div class="row g-1">
+								<div class="col d-grid">
 
-				<form>
-						<div  aria-label="Basic example">
-							<div class="row gy-3 gx-0">
-								<input type="radio" class="btn-check" name="shots" id="isShot" autocomplete="off" onchange="checkType()">
-								<label class="btn btn-outline-primary" for="isShot">Бросок по воротам</label>
+									<input type="radio" class="btn-check" name="shots" id="isShot" autocomplete="off" onchange="checkType()">
+									<label class="btn btn-outline-primary" for="isShot">Бросок</label>
+								</div>
 
-								<input type="radio" class="btn-check" name="shots" id="isTarget" autocomplete="off" onchange="checkType()">
-								<label class="btn btn-outline-primary" for="isTarget">Попадание в створ</label>
+								<div class="col d-grid">
+									<input type="radio" class="btn-check" name="shots" id="isTarget" autocomplete="off" onchange="checkType()">
+									<label class="btn btn-outline-primary" for="isTarget">Створ</label>
+								</div>
 
-								<input type="radio" class="btn-check btn-sm" name="shots" id="isGoal" autocomplete="off" onchange="checkType()">
-								<label class="btn btn-outline-primary" for="isGoal">Гол</label>
+								<div class="col d-grid">
+									<input type="radio" class="btn-check btn-sm" name="shots" id="isGoal" autocomplete="off" onchange="checkType()">
+									<label class="btn btn-outline-primary" for="isGoal">Гол</label>
+								</div>
 							</div>
 
 						</div>
 					<hr>
-					<div class="form-check">
-						<input class="form-check-input " data-team=1 type="radio" name="flexRadioDefault" id="homeRadio" onchange="checkType()">
-						<label id="homeRadioLabel" class="form-check-label" for="homeRadio">
-							Аланские барсы
-						</label>
+					<div class="container text-center">
+						<div class="row">
+							<div class="col d-grid">
+								<span id="player">
+									Игрок:
+								</span>
+								<span id="playerID">
+									47
+								</span>
+							</div>
+						</div>
+						<div class="row g-1">
+							<div class="col d-grid">
+								<button type="button" class="btn btn-sm btn-primary digit" data-digit=1>1</button>
+							</div>
+							<div class="col d-grid">
+								<button type="button" class="btn btn-sm btn-primary digit" data-digit=2>2</button>
+							</div>
+							<div class="col d-grid">
+								<button type="button" class="btn btn-sm btn-primary digit" data-digit=3>3</button>
+							</div>
+						</div>
+						<div class="row  g-1">
+							<div class="col d-grid">
+								<button type="button" class="btn btn-sm btn-primary digit" data-digit=4>4</button>
+							</div>
+							<div class="col d-grid">
+								<button type="button" class="btn btn-sm btn-primary digit" data-digit=5>5</button>
+							</div>
+							<div class="col d-grid">
+								<button type="button" class="btn btn-sm btn-primary digit" data-digit=6>6</button>
+							</div>
+						</div>
+						<div class="row g-1">
+							<div class="col d-grid">
+								<button type="button" class="btn btn-sm btn-primary digit" data-digit=7>7</button>
+							</div>
+							<div class="col d-grid">
+								<button type="button" class="btn btn-sm btn-primary digit" data-digit=8>8</button>
+							</div>
+							<div class="col d-grid">
+								<button type="button" class="btn btn-sm btn-primary digit" data-digit=9>9</button>
+							</div>
+						</div>
+						<div class="row g-1">
+							<div class="col-4 offset-4 d-grid">
+								<button type="button" class="btn btn-sm btn-primary digit" data-digit=0>0</button>
+							</div>
+						</div>
 					</div>
-					<div class="form-check">
-						<input class="form-check-input" data-team=5 type="radio" name="flexRadioDefault" id="awayRadio" onchange="checkType()">
-						<label id="awayRadioLabel" class="form-check-label" for="awayRadio">Наследие</label>
+
+				<hr>
+				<div class="container text-center">
+					<div class="row g-1">
+						<div class="col d-grid">
+							<input type="radio" class="btn-sm btn-check" data-team=1 name="flexRadioDefault" id="homeRadio" onchange="checkType()">
+							<label id="homeRadioLabel" class="btn btn-outline-danger" for="homeRadio">
+								Аланские барсы
+							</label>
+						</div>
+						<div class="col d-grid">
+							<input type="radio" class="btn-sm-primary btn-check" data-team=5  name="flexRadioDefault" id="awayRadio" onchange="checkType()">
+							<label id="awayRadioLabel" class="btn btn-outline-primary" for="awayRadio">Наследие</label>
+						</div>
 					</div>
-				</form>
+				</div>
+
 				<!-- FORM CONTROL -->
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="resetModal()">Отмена</button>
-				<button id="sendData" type="button" class="btn btn-primary" onclick="closeModal()">Сохранить</button>
+				<button id="sendData" type="button" class="btn btn-sm btn-primary" onclick="closeModal()">Сохранить</button>
 			</div>
 			<span id="team_id_data"></span>
 		</div>
@@ -198,9 +260,10 @@
 		heat.clear()
 
 		for (const point of array) {
-			drawPoint(point['shot_x'], point['shot_y'])
-			if (point['is_target'] === true){draw_text(point['shot_x'], point['shot_y'], "◎️", "#505050", 50)}
-			if (point['is_goal'] === true){draw_text(point['shot_x'], point['shot_y'], "◉", "#000000", 70)}
+			//drawPoint(point['shot_x'], point['shot_y'])
+			if(point['is_shot'] === true){draw_text(point['shot_x'], point['shot_y'], "●️", "rgba(0,69,255,0.2)", 260)}
+			if (point['is_target'] === true){draw_text(point['shot_x'], point['shot_y'], "●️", "rgba(255,0,198,0.2)", 160)}
+			if (point['is_goal'] === true){draw_text(point['shot_x'], point['shot_y'], "●", "rgba(194,0,74,0.4)", 100)}
 		}
 	}
 </script>
