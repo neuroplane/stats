@@ -81,9 +81,7 @@ function getCursorPosition(canvas, event) {
     const rect = canvas.getBoundingClientRect()
     const x = Math.round((event.clientX - rect.left) / (rect.right - rect.left) * canvas.width)
     const y = Math.round((event.clientY - rect.top) / (rect.bottom - rect.top) * canvas.height)
-
     openModal(x,y)
-    //drawPoint(x, y)
 }
 /*---------- s3----------*/
 const canvas_heatmap = document.querySelector('#goals')
@@ -92,12 +90,27 @@ const canvas_heatmap = document.querySelector('#goals')
 canvas_heatmap.addEventListener('mouseup', function(e) {
     getCursorPosition(canvas_heatmap, e)
 })
-const digitArray = [];
 const elements = document.querySelectorAll('.digit');
 elements.forEach(element => {
     element.addEventListener('click', () => {
         // Code to be executed when the element is clicked
-        digitArray.push(element.dataset.digit)
-        document.getElementById("playerID").innerHTML = element.dataset.digit
+        checkPlayerIdArray(element.dataset.digit)
+
+
     });
 });
+
+const playerIdArray = []
+let playerIdString = ""
+function checkPlayerIdArray(digit) {
+    if (playerIdArray.length >= 2){
+        playerIdArray.length = 0
+        playerIdString = ''
+        playerIdArray.push(digit)
+    } else {
+        playerIdArray.push(digit)
+    }
+    document.getElementById("playerID").innerHTML = playerIdArray.join('')
+    for (const item of playerIdArray) {
+    }
+}

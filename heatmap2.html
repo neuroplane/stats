@@ -78,7 +78,7 @@
 	</div>
 	<div class="row">
 		<div class="col-md-6 offset-md-3">
-			<div id="main_id" class="mt-1 render position-absolute top-10 start-50 translate-middle-x">
+			<div id="main_id" class="mt-1 ">
 				<canvas class="mt-1 render position-absolute top-10 start-50 translate-middle-x" id='my-canvas' ></canvas>
 				<canvas class="mt-1 render position-absolute top-10 start-50 translate-middle-x" id='heatmap' ></canvas>
 				<canvas class="mt-1 render position-absolute top-10 start-50 translate-middle-x" id='goals' ></canvas>
@@ -129,9 +129,11 @@
 								<span id="player">
 									Игрок:
 								</span>
-								<span id="playerID">
-									47
-								</span>
+								<strong>
+									<span id="playerID">
+										&nbsp
+									</span>
+								</strong>
 							</div>
 						</div>
 						<div class="row g-1">
@@ -171,6 +173,9 @@
 							<div class="col-4 offset-4 d-grid">
 								<button type="button" class="btn btn-sm btn-primary digit" data-digit=0>0</button>
 							</div>
+							<div class="col-2 offset-2 d-grid">
+								<button type="button" class="btn btn-sm btn-danger">C</button>
+							</div>
 						</div>
 					</div>
 
@@ -202,7 +207,8 @@
 </div>
 <div class="modal-backdrop fade show" id="backdrop" style="display: none;"></div>
 
-<a type="button" role="button" href="./" class="position-absolute bottom-0 end-0 btn btn-sm btn-outline-dark">к списку игр</a>
+<a type="button" role="button" href="./" class="position-absolute bottom-0 end-0 btn btn-sm btn-outline-dark m-2">к списку игр</a>
+
 
 <script id="api_requests">
 	const home_array = [];
@@ -360,7 +366,7 @@
 			'team_id': returnShootingTeam(),
 			'shot_x': point_x,
 			'shot_y': point_y,
-
+			'player_id': document.getElementById("playerID").innerHTML,
 			'is_shot': document.getElementById('isShot').checked,
 			'is_target': document.getElementById('isTarget').checked,
 			'is_goal': document.getElementById('isGoal').checked,
