@@ -210,6 +210,7 @@
 <a type="button" role="button" href="./" class="position-absolute bottom-0 end-0 btn btn-sm btn-outline-dark m-2">к списку игр</a>
 
 
+
 <script id="api_requests">
 	const home_array = [];
 	const away_array = [];
@@ -361,12 +362,18 @@
 	function closeModal() {
 		let point_x = document.getElementById("coordinate_x").innerHTML
 		let point_y = document.getElementById("coordinate_y").innerHTML
-		let data = {'player_id': 47,
+		let playerID = null
+		if (Number.isInteger(Number(document.getElementById("playerID").innerHTML))){
+			playerID = document.getElementById("playerID").innerHTML
+		} else {
+			playerID = null
+		}
+		let data = {
 			'game_id': getURLValues()['game_id'],
 			'team_id': returnShootingTeam(),
 			'shot_x': point_x,
 			'shot_y': point_y,
-			'player_id': document.getElementById("playerID").innerHTML,
+			'player_id': playerID,
 			'is_shot': document.getElementById('isShot').checked,
 			'is_target': document.getElementById('isTarget').checked,
 			'is_goal': document.getElementById('isGoal').checked,
@@ -442,7 +449,7 @@
 				.catch(err => console.error(err))
 				.then(response => response.json())
 				.then(response => {
-					//console.log(response)
+					console.log(response)
 					return response;
 					})
 	}
